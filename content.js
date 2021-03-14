@@ -156,12 +156,135 @@ function revertLineHeight(tags) {
     });
 }
 
-/* Text-to-Speech */
+/* Google Custom Image Search API */
 document.body.innerHTML += "<div data-ml-modal id='speakModal'><a href='' class='modal-overlay'></a><div class='modal-dialog'><div class='modal-content text-center'><p  id='speakText'></p><div id='imgdiv' style='margin-bottom: 20px; display: none'><img id='textImg' src='' width='50%'></div><button id='text-to-speech-btn' type='button' class='modal-button'><span>SPEAK</span></button></div></div></div>";
+
+function loadImageClient() {
+  gapi.client.setApiKey("GOOGLE_API_KEY");
+  return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/customsearch/v1/rest")
+      .then(function() { console.log("GAPI client loaded for API"); },
+            function(err) { console.error("Error loading GAPI client for API", err); });
+}
+
+function executeImageSearch(text) {
+  return gapi.client.search.cse.list({
+    "cx": "1d1e43e846323a46a",
+    "exactTerms": text,
+    "filter": "1",
+    "num": 1,
+    "searchType": "image",
+    "start": 1
+  })
+  .then(function(response) {
+    //console.log("Response", response.result);
+    return response.result.queries.items[0].image.thumbnailLink;
+  },
+  function(err) { console.error("Execute error", err); });
+}
+
+gapi.load("client");
 
 window.addEventListener("mouseup", function(e){
   e.preventDefault();
-  var selectedText = "Selected Text";
-  var modal = document.getElementById("speakText");
-  modal.innerHTML = selectedText;
+  var selectedText = getSelectedText();
+
+  if(selectedText != ""){
+    console.log(selectedText);
+    
+    var modal = document.getElementById("speakText");
+    modal.innerHTML = selectedText;
+
+    var imgdiv = document.getElementById("imgdiv");
+    var img = document.getElementById("textImg");
+    var text = selectedText;
+
+    loadImageClient();
+    var imgurl = executeImageSearch(text);
+
+    img.src = imgurl;
+    imgdiv.style.display = 'block';
+    
+    var str = window.location.href;
+    var url = str.substring(0, str.indexOf('#'));
+    console.log(url);
+    window.location.href = url + "#speakModal";
+  }
+  else{
+    console.log("Nothing!");
+  }
 });
+
+function getSelectedText() { 
+  var selectedText = ''; 
+
+  // window.getSelection 
+  if (window.getSelection) { 
+      selectedText = window.getSelection().toString();
+  } 
+  // document.getSelection 
+  else if (document.getSelection) { 
+      selectedText = document.getSelection().toString();
+  } 
+  // document.selection 
+  else if (document.selection) { 
+      selectedText =  
+      document.selection.createRange().text; 
+  }
+  return selectedText;
+} 
+
+/* Google Text-To-Speech API */
+function authenticate() {
+  return gapi.auth2.getAuthInstance()
+      .signIn({scope: "https://www.googleapis.com/auth/cloud-platform"})
+      .then(function() { console.log("Sign-in successful"); },
+            function(err) { console.error("Error signing in", err); });
+}
+
+function loadTTSClient() {
+  gapi.client.setApiKey("GOOGLE_TEXT_TO_SPEECH_API_KEY");
+  return gapi.client.load("https://texttospeech.googleapis.com/$discovery/rest?version=v1beta1")
+      .then(function() { console.log("GAPI client loaded for API"); },
+            function(err) { console.error("Error loading GAPI client for API", err); });
+}
+
+function executeTTS() {
+  return gapi.client.texttospeech.text.synthesize({
+    "resource": {
+      "input": {
+        "text": "Good Morning"
+      },
+      "audioConfig": {
+        "audioEncoding": "OGG_OPUS"
+      },
+      "voice": {
+        "languageCode": "en-US",
+        "ssmlGender": "MALE"
+      }
+    }
+  })
+  .then(function(response) {
+    console.log("Response", response.result.audioContent);
+    return response.result.audioContent;
+  },
+  function(err) { 
+    console.error("Execute error", err); 
+  });
+}
+
+gapi.load("client:auth2", function() {
+  gapi.auth2.init({client_id: "GOOGLE_CLIENT_ID"});
+});
+
+document.getElementById("text-to-speech-btn").addEventListener("click", function(e) {
+  e.preventDefault();
+
+  var txt = document.getElementById('speakText').innerHTML;
+  console.log(txt);
+
+  // Loading and authenticating the client
+  authenticate();
+  loadTTSClient();
+
+  executeTTS();
+})
