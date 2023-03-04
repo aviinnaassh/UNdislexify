@@ -25,7 +25,7 @@ It provides the following features:
 
 1. **Javascript** : Javascript is the programming language in which this entire project has been built.
 2. **HTML** : It is used to create the frontend of the chrome extension.
-3. **CSS** : It is used to add all the styling in the chrome extension. All the custom changes on the hoest website are being done using css as well.
+3. **CSS** : It is used to add all the styling in the chrome extension. All the custom changes on the host website are being done using css as well.
 5. **Google Cloud Text To Speech API** : This API service has been used for text-to-speech conversion for listening to certain text on the websites by the user.
 5. **Google Cloud Custom Search API** : This API service has been used to get images corresponding to words for the user for better visualization.
 
