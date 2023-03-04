@@ -3,7 +3,7 @@
 ## Inspiration 
 A reading disability is a condition in which a sufferer displays difficulty reading. Examples of reading disabilities include: developmental dyslexia, alexia and hyperlexia. Often people with visual differences find reading difficult as well.
 
-Dyslexia is a learning disorder that directly affects reading, writing, spelling, and speaking skills. It is the most common learning disability, affecting as much as 17% of children in the United States. People with dyslexia typically have trouble reading fluently. They often read slowly and make mistakes that can impact how well they comprehend what they read.
+Dyslexia is a learning disorder that directly affects reading, writing, spelling, and speaking skills. It is the most common learning disability, affecting as much as 1 out of 10 people in the world which is approximately 780 million. People with dyslexia typically have trouble reading fluently. They often read slowly and make mistakes that can impact how well they comprehend what they read.
 
 So, I have created a chrome extension to make reading webpages easier for our friends with dyslexia and other learning disabilities!
 
